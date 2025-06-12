@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { login } from '../services/authService'; 
 import { useNavigate } from 'react-router';
+import { isTokenExpired } from '../services/token';
 
 function UserLogin() {
   const [email, setEmail] = useState('');
@@ -8,11 +9,20 @@ function UserLogin() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+ useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    if (token && isTokenExpired(token)) {
+      localStorage.removeItem('access_token');
+      navigate('/login');
+    }
+  }, [navigate]);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
     try {
-      await login(email, password);
+      const result = await login(email, password);
+      localStorage.setItem('access_token', result.user.access_token);
       navigate('/');
     } catch {
       setError('Usuário ou senha inválidos');

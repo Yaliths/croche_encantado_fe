@@ -4,7 +4,6 @@ function ListCards() {
     { id: 2, name: "Card 2", price: 15.0 },
     { id: 3, name: "Card 3", price: 20.0 },
   ];
-  products = [];
   
 
   return (
